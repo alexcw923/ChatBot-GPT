@@ -4,7 +4,6 @@ import torch
 
 
 
-# openai.api_key = "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"
 class ChatBot():
     def __init__(self, key, train, name) -> None:
         openai.api_key = key
