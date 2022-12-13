@@ -4,24 +4,26 @@ import openai
 
 
 
-class ChatBot():
-    def __init__(self, access) -> None:
+class Bot:
+    def __init__(self, name, ai_name = "AI", access = False) -> None:
         openai.api_key = os.getenv("OPENAI_API_KEY")
+        self.personality = ""
         self.chat_log = ""
-        self.user_name = None
+        self.user_name = name
+        self.ai_name = ai_name
         self.access = access
         
     
     def response(self, question) -> str:
         self.chat_log += f"{self.user_name}: {question}\n"
-        prompt = f"{self.chat_log}JOI:"
+        prompt = f"{self.personality}\n{self.chat_log}{self.ai_name}:"
         
-        if not self.access:
+        if self.access:
             text = openai.Completion.create(
                 model="text-davinci-003",
                 prompt=prompt,
                 temperature=0.7,
-                max_tokens=3000,
+                max_tokens=100,
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,
@@ -29,18 +31,17 @@ class ChatBot():
         else:
             text = f"I love you!"
         
-        self.chat_log += f"JOI: {text}\n"
+        self.chat_log += f"{self.ai_name}: {text}\n"
         return text
     
     def chat(self):
-        print("This is your virtual girlfriend. What is your name?")
-        self.user_name = input()
-        print("JOI: Great! My name is JOI. How can I help you?")
+        
         while True:
-            question = input(f'{self.user_name}:')
+            question = input(f'{self.user_name}: ')
             if question == "stop":
+                print("Have a great day!")
                 break
             
-            print("AI: ", self.response(question))
+            print(f"{self.ai_name}: ", self.response(question))
     
     
