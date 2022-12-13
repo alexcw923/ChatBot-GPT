@@ -5,9 +5,11 @@ import openai
 
 
 class Bot:
-    def __init__(self, name, ai_name = "AI", access = False) -> None:
+    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0) -> None:
         openai.api_key = os.getenv("OPENAI_API_KEY")
-        self.personality = ""
+        self.personality = personality
+        self.scenario = scenario
+        self.age = age
         self.chat_log = ""
         self.user_name = name
         self.ai_name = ai_name
@@ -16,7 +18,7 @@ class Bot:
     
     def response(self, question) -> str:
         self.chat_log += f"{self.user_name}: {question}\n"
-        prompt = f"{self.personality}\n{self.chat_log}{self.ai_name}:"
+        prompt = f"{self.scenario}\n{self.personality}\n{self.chat_log}{self.ai_name}:"
         
         if self.access:
             text = openai.Completion.create(
