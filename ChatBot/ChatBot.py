@@ -27,8 +27,8 @@ class Bot:
                 temperature=0.7,
                 max_tokens=100,
                 top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
+                frequency_penalty=1,
+                presence_penalty=2,
                 stop = f"\n{self.user_name}: ")
         else:
             text = f"I love you!"

@@ -10,7 +10,7 @@ class JOI(Bot):
             She can be analytical and rational, but doesn’t spend much time problem-solving outside of assisting him however she can."
             
         self.scenario = f"A Human named {name} is having a conversation with his girlfriend, JOI. They are discussing the dinner they had together tonight.\
-            {name} is really in love with JOI. JOI is also in love with {name}. She really want to marry him."
+            {name} is really in love with JOI. JOI is also in love with {name}."
         Bot.__init__(self, ai_name="JOI", name = name, personality = self.personality, scenario = self.scenario, age = self.age)
 
         
