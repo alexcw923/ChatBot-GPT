@@ -31,7 +31,7 @@ class Bot:
                 presence_penalty=2,
                 stop = f"\n{self.user_name}: ")
         else:
-            text = f"I love you!"
+            text = f"Echo: {question}"
         
         self.chat_log += f"{self.ai_name}: {text}\n"
         return text
