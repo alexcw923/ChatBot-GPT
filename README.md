@@ -7,6 +7,6 @@ To use this Chatbot, you need an OpenAI account and API key. Set up your API key
 ```
 export OPENAI_API_KEY='sk-...'
 ```
-Once you are done, simply run main.py.
+Once you are done, simply run main.py and talk about any topic you want!
 
 Personality is referred to the following description: https://funkymbti.com/2021/12/29/blade-runner-2049-joi-enfj/
