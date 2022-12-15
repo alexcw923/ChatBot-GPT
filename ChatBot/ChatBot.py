@@ -41,8 +41,8 @@ class Bot:
         return text
     
     def recordAudio(self):
-        print("Start in 5 seconds...")
-        time.sleep(5)
+        print("Start in 3 seconds...")
+        time.sleep(3)
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
         RATE = 44100
@@ -86,8 +86,8 @@ class Bot:
                 # load audio and pad/trim it to fit 30 seconds
                 result = model.transcribe("question.wav", fp16 =False)
                 question = result["text"]
-                print(question)
-                
+                print(f"{self.user_name}: ", question)
+
             if question == "stop" or len(question) == 0:
                 print("Have a great day!")
                 break
