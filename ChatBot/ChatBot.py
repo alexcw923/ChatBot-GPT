@@ -1,11 +1,9 @@
 import os
 import openai
-
-
-
+import whisper
 
 class Bot:
-    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0) -> None:
+    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0, text_option = 1) -> None:
         openai.api_key = os.getenv("OPENAI_API_KEY")
         self.personality = personality
         self.scenario = scenario
@@ -14,6 +12,7 @@ class Bot:
         self.user_name = name
         self.ai_name = ai_name
         self.access = access
+        self.text_option = text_option
         
     
     def response(self, question) -> str:
@@ -39,8 +38,31 @@ class Bot:
     
     def chat(self):
         
+        model = whisper.load_model("base")
+        
         while True:
-            question = input(f'{self.user_name}: ')
+            if self.text_option == 1:
+                question = input(f'{self.user_name}: ')
+            else:
+                # load audio and pad/trim it to fit 30 seconds
+                audio = whisper.load_audio("audio.mp3")
+                audio = whisper.pad_or_trim(audio)
+
+                # make log-Mel spectrogram and move to the same device as the model
+                mel = whisper.log_mel_spectrogram(audio).to(model.device)
+
+                # detect the spoken language
+                _, probs = model.detect_language(mel)
+                print(f"Detected language: {max(probs, key=probs.get)}")
+
+                # decode the audio
+                options = whisper.DecodingOptions()
+                result = whisper.decode(model, mel, options)
+
+                # print the recognized text
+                question = result.text
+                print(question)
+                
             if question == "stop":
                 print("Have a great day!")
                 break
