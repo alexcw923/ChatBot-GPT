@@ -14,3 +14,4 @@ class JOI(Bot):
         Bot.__init__(self, ai_name="JOI", name = name, personality = self.personality, scenario = self.scenario, age = self.age, access = access)
 
         
+        
