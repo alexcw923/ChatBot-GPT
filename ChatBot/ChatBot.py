@@ -21,7 +21,7 @@ class Bot:
         prompt = f"{self.scenario}\n{self.personality}\n{self.chat_log}{self.ai_name}:"
         
         if self.access:
-            text = openai.Completion.create(
+            completion = openai.Completion.create(
                 model="text-davinci-003",
                 prompt=prompt,
                 temperature=0.7,
@@ -30,6 +30,7 @@ class Bot:
                 frequency_penalty=1,
                 presence_penalty=2,
                 stop = f"\n{self.user_name}: ")
+            text = completion.choices[0].text
         else:
             text = f"Echo: {question}"
         
