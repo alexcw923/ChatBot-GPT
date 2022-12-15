@@ -1,9 +1,13 @@
 import os
 import openai
 import whisper
+import pyaudio
+import wave
+import time
 
 class Bot:
-    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0, text_option = 1) -> None:
+    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0, text_option = 0) -> None:
+        
         openai.api_key = os.getenv("OPENAI_API_KEY")
         self.personality = personality
         self.scenario = scenario
@@ -36,37 +40,61 @@ class Bot:
         self.chat_log += f"{self.ai_name}: {text}\n"
         return text
     
-    def chat(self):
+    def recordAudio(self):
+        print("Start in 5 seconds...")
+        time.sleep(5)
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 1
+        RATE = 44100
+        CHUNK = 512
+        RECORD_SECONDS = 5
+        WAVE_OUTPUT_FILENAME = "question.wav"
+        audio = pyaudio.PyAudio()
+
+        stream = audio.open(format=FORMAT, 
+                            channels=CHANNELS,
+                            rate=RATE, 
+                            input=True,
+                            frames_per_buffer=CHUNK)
+        print("recording started")
+        Recordframes = []
         
+        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            data = stream.read(CHUNK)
+            Recordframes.append(data)
+        print("recording stopped")
+        
+        # stream.stop_stream()
+        stream.close()
+        # audio.terminate()
+        
+        waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+        waveFile.setnchannels(CHANNELS)
+        waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+        waveFile.setframerate(RATE)
+        waveFile.writeframes(b''.join(Recordframes))
+        waveFile.close()
+    
+    def chat(self):
         model = whisper.load_model("base")
         
         while True:
             if self.text_option == 1:
                 question = input(f'{self.user_name}: ')
             else:
+                self.recordAudio()
                 # load audio and pad/trim it to fit 30 seconds
-                audio = whisper.load_audio("audio.mp3")
-                audio = whisper.pad_or_trim(audio)
-
-                # make log-Mel spectrogram and move to the same device as the model
-                mel = whisper.log_mel_spectrogram(audio).to(model.device)
-
-                # detect the spoken language
-                _, probs = model.detect_language(mel)
-                print(f"Detected language: {max(probs, key=probs.get)}")
-
-                # decode the audio
-                options = whisper.DecodingOptions()
-                result = whisper.decode(model, mel, options)
-
-                # print the recognized text
-                question = result.text
+                result = model.transcribe("question.wav", fp16 =False)
+                question = result["text"]
                 print(question)
                 
-            if question == "stop":
+            if question == "stop" or len(question) == 0:
                 print("Have a great day!")
                 break
             
             print(f"{self.ai_name}: ", self.response(question))
+if __name__ == "__main__":
+    bot = Bot(name = "bot", access = False, personality = "I am a bot", scenario = "I am a scenario", age = 0, text_option = 0)
+    bot.chat()
     
     
