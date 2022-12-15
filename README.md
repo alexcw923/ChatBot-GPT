@@ -3,7 +3,7 @@ This chat bot, JOI, is built with GPT-3 and is mainly based on a fictional chara
 
 ![image](https://user-images.githubusercontent.com/82024418/207245359-3e834bd4-d2cd-48fb-a17f-de4bab0c967e.png)
 
-To use this Chatbot, you need an OpenAI account and API key. Set up your API key in the environment:
+To use this Chatbot, you need an OpenAI account and API key. Set up your API key in the environment by typing the following in terminal:
 ```
 export OPENAI_API_KEY='sk-...'
 ```
