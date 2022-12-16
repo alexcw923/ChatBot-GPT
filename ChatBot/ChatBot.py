@@ -102,8 +102,16 @@ class Bot:
     def __str__(self):
         return self.chat_log
     
+    def get_param(self):
+        for k, v in self.param.items(): 
+            print(k, "= ", v)
     
-        
+    def set_param(self, **kwargs):
+        for key, value in kwargs.items():
+            self.param[key] = value
+    
+    def set_engine(self, engine):
+        self.param["model"] = engine
 
             
 if __name__ == "__main__":
