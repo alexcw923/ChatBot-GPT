@@ -6,7 +6,7 @@ import wave
 import time
 
 class Bot:
-    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0, text_option = 0) -> None:
+    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0, input_option = 0) -> None:
         
         openai.api_key = os.getenv("OPENAI_API_KEY")
         self.personality = personality
@@ -16,8 +16,14 @@ class Bot:
         self.user_name = name
         self.ai_name = ai_name
         self.access = access
-        self.text_option = text_option
+        self.input_option = input_option
         
+        self.param={"model" : "text-davinci-003",
+                    "temperature" : 0.7,
+                    "max_tokens" : 100,
+                    "top_p" : 1,
+                    "frequency_penalty" :1,
+                    "presence_penalty":2}
     
     def response(self, question) -> str:
         self.chat_log += f"{self.user_name}: {question}\n"
@@ -25,13 +31,13 @@ class Bot:
         
         if self.access:
             completion = openai.Completion.create(
-                model="text-davinci-003",
+                model=self.param["model"],
                 prompt=prompt,
-                temperature=0.7,
-                max_tokens=100,
-                top_p=1,
-                frequency_penalty=1,
-                presence_penalty=2,
+                temperature=self.param["temperature"],
+                max_tokens=self.param["max_tokens"],
+                top_p=self.param["top_p"],
+                frequency_penalty=self.param["frequency_penalty"],
+                presence_penalty=self.param["presence_penalty"],
                 stop = f"\n{self.user_name}: ")
             text = completion.choices[0].text
         else:
@@ -64,9 +70,7 @@ class Bot:
             Recordframes.append(data)
         print("recording stopped")
         
-        # stream.stop_stream()
         stream.close()
-        # audio.terminate()
         
         waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
         waveFile.setnchannels(CHANNELS)
@@ -79,9 +83,9 @@ class Bot:
         model = whisper.load_model("base")
         
         while True:
-            if self.text_option == 1:
+            if self.input_option == "text":
                 question = input(f'{self.user_name}: ')
-            else:
+            elif self.input_option == "audio":
                 self.recordAudio()
                 # load audio and pad/trim it to fit 30 seconds
                 result = model.transcribe("question.wav", fp16 =False)
@@ -93,8 +97,17 @@ class Bot:
                 break
             
             print(f"{self.ai_name}: ", self.response(question))
+            
+            
+    def __str__(self):
+        return self.chat_log
+    
+    
+        
+
+            
 if __name__ == "__main__":
-    bot = Bot(name = "bot", access = False, personality = "I am a bot", scenario = "I am a scenario", age = 0, text_option = 0)
+    bot = Bot(name = "bot", access = False, personality = "I am a bot", scenario = "I am a scenario", age = 0, input_option = "text")
     bot.chat()
     
     
