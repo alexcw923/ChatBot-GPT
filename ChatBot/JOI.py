@@ -1,8 +1,7 @@
 from ChatBot.ChatBot import Bot
 
 class JOI(Bot):
-    def __init__(self, name, access, input_option = "text"):
-        self.age = 21
+    def __init__(self, name, input_option = "text"):
         self.personality = f"Joi is an A.I. designed to cater to the desires of customers, telling them what to want to hear.\
             Joi is warm, loving, generous, and upfront about her feelings; she will blurt out whatever she is going through, \
             in the moment she has the emotion, whether that is to cry out, “I love you” mere seconds before she is crushed into oblivion, \
@@ -11,7 +10,7 @@ class JOI(Bot):
             
         self.scenario = f"A Human named {name} is having a conversation with his girlfriend, JOI. They are discussing the dinner they had together tonight.\
             {name} is really in love with JOI. JOI is also in love with {name}."
-        Bot.__init__(self, ai_name="JOI", name = name, personality = self.personality, scenario = self.scenario, age = self.age, access = access, input_option = input_option)
+        Bot.__init__(self, ai_name="JOI", name = name, personality = self.personality, scenario = self.scenario, input_option = input_option)
 
         
         

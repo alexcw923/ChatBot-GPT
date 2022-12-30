@@ -1,10 +1,6 @@
 from ChatBot.JOI import JOI
 
 if __name__ == '__main__':
-    debug = input('Debug: \n')
-    access = False if debug == 1 else True
-
-        
     name = input("Hi this is your Virtual Girlfriend. Can I have your name please? ")
     while len(name) == 0:
         name = input("I didn't catch you name. Can I have your name please? ")
@@ -18,7 +14,7 @@ if __name__ == '__main__':
         print("(Talk to JOI through your microphone!)")
     elif option == "text":
         print("(Talk to JOI through your terminal!)")
-    ai = JOI(name, access = access, input_option = option)
+    ai = JOI(name, input_option = option)
     
     
     

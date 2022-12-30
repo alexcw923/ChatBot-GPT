@@ -6,30 +6,46 @@ import wave
 import time
 
 class Bot:
-    def __init__(self, name, ai_name = "AI", access = False, personality = "", scenario = "", age = 0, input_option = 0) -> None:
-        
+    def __init__(self, name : str, ai_name : str = "AI", access : bool = False, personality : str = "", scenario : str = "", input_option : str = "text") -> None:
+        """
+        Args:
+            name (str): The user's name the chatbot will chat with.
+            ai_name (str, optional): The chatbot's name. Defaults to "AI".
+            personality (str, optional): Chatbot's personality to set up personalize conversation. Defaults to empty string.
+            scenario (str, optional): The scenario of the conversation. Could be the summary of the previous conversations. Defaults to empty string.
+            input_option (str, optional): The users' input option of the conversation. "text" to chat with entering sentences. "audio" to chat with microphone. Defaults to "text".
+        """
         openai.api_key = os.getenv("OPENAI_API_KEY")
         self.personality = personality
         self.scenario = scenario
-        self.age = age
         self.chat_log = ""
         self.user_name = name
         self.ai_name = ai_name
-        self.access = access
         self.input_option = input_option
         
-        self.param={"model" : "text-davinci-003",
+        #the parameters of openai text completion
+        self.param={"model" : "text-ada-001",
                     "temperature" : 0.7,
                     "max_tokens" : 100,
                     "top_p" : 1,
                     "frequency_penalty" :1,
                     "presence_penalty":2}
     
-    def response(self, question) -> str:
-        self.chat_log += f"{self.user_name}: {question}\n"
+    def response(self, input_text, access=False) -> str:
+        """Process the input text and the conversation.
+
+        Args:
+            input_text (str): the input text of the user
+            access (bool, optional): access to openai text completion. Defaults to False.
+
+
+        Returns:
+            str: _description_
+        """
+        self.chat_log += f"{self.user_name}: {input_text}\n"
         prompt = f"{self.scenario}\n{self.personality}\n{self.chat_log}{self.ai_name}:"
         
-        if self.access:
+        if access:
             completion = openai.Completion.create(
                 model=self.param["model"],
                 prompt=prompt,
@@ -41,19 +57,25 @@ class Bot:
                 stop = f"\n{self.user_name}: ")
             text = completion.choices[0].text
         else:
-            text = f"Echo: {question}"
+            text = f"Echo: {input_text}"
         
         self.chat_log += f"{self.ai_name}: {text}\n"
         return text
     
-    def recordAudio(self):
+    def recordAudio(self, record_time : int = 5):
+        """
+        Record chat through microphone within 5 seconds. Output question.wav file into the directory.
+        
+        Args:
+            record_time (int, optional): the recording time of the audio. Defaults to 5 seconds.
+        """
         print("Start in 3 seconds...")
         time.sleep(3)
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
         RATE = 44100
         CHUNK = 512
-        RECORD_SECONDS = 5
+        RECORD_SECONDS = record_time
         WAVE_OUTPUT_FILENAME = "question.wav"
         audio = pyaudio.PyAudio()
 
@@ -79,18 +101,30 @@ class Bot:
         waveFile.writeframes(b''.join(Recordframes))
         waveFile.close()
     
-    def chat(self):
+    def speechToText(self, file_name : str = "question.wav") -> str:
+        """Transcribe speech to text.
+
+        Args:
+            file_name (str, optional): the file storing the audio. Defaults to "question.wav".
+
+        Returns:
+            str: the speech in string format.
+        """
         model = whisper.load_model("base")
+        self.recordAudio()
+        # load audio and pad/trim it to fit 30 seconds
+        result = model.transcribe(file_name, fp16 =False)
+        
+            
+        return result["text"]
+        
+    def chat(self):
+        """Simply call this function to start a conversation
+        """
         
         while True:
-            if self.input_option == "text":
-                question = input(f'{self.user_name}: ')
-            elif self.input_option == "audio":
-                self.recordAudio()
-                # load audio and pad/trim it to fit 30 seconds
-                result = model.transcribe("question.wav", fp16 =False)
-                question = result["text"]
-                print(f"{self.user_name}: ", question)
+            question = self.speechToText() if self.input_option == "audio" else input(f'{self.user_name}: ')
+            print(f"{self.user_name}: ", question)
 
             if question == "stop" or len(question) == 0:
                 print("Have a great day!")
@@ -103,14 +137,23 @@ class Bot:
         return self.chat_log
     
     def get_param(self):
+        """
+        Get the parameters of the text completion model.
+        """
         for k, v in self.param.items(): 
             print(k, "= ", v)
     
     def set_param(self, **kwargs):
+        """
+        Set the parameters of the text completion model.
+        """
         for key, value in kwargs.items():
             self.param[key] = value
     
     def set_engine(self, engine):
+        """
+        Set the engine of the text completion model.
+        """
         self.param["model"] = engine
 
             
