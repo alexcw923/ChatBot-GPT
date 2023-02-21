@@ -6,7 +6,7 @@ import wave
 import time
 
 class Bot:
-    def __init__(self, name : str, ai_name : str = "AI", access : bool = False, personality : str = "", scenario : str = "", input_option : str = "text") -> None:
+    def __init__(self, name : str, ai_name : str = "AI", personality : str = "", scenario : str = "", input_option : str = "text") -> None:
         """
         Args:
             name (str): The user's name the chatbot will chat with.
@@ -158,7 +158,7 @@ class Bot:
 
             
 if __name__ == "__main__":
-    bot = Bot(name = "bot", access = False, personality = "I am a bot", scenario = "I am a scenario", age = 0, input_option = "text")
+    bot = Bot(name = "bot", personality = "I am a bot", scenario = "I am a scenario", input_option = "text")
     bot.chat()
     
     

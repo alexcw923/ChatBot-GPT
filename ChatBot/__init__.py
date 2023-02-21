@@ -1,4 +1,4 @@
-from ChatBot.ChatBot import Bot
+from ChatBot.bot import Bot as Bot
 
 class JOI(Bot):
     def __init__(self, name, input_option = "text"):
@@ -13,4 +13,4 @@ class JOI(Bot):
         Bot.__init__(self, ai_name="JOI", name = name, personality = self.personality, scenario = self.scenario, input_option = input_option)
 
         
-        
+            
